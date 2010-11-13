@@ -1,0 +1,4 @@
+AddType application/x-apple-diskimage .dmg
+AddType application/x-cpio .qspkg
+AddType application/xml .qsinfo
+AddType application/xml .plist
