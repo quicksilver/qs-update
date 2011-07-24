@@ -74,7 +74,7 @@ foreach ($query as $plugin) {
   if (isset($plugin_array[PLUGIN_DISPLAY_VERSION]))
     $plugin_structure['CFBundleShortVersionString'] = new CFString($plugin_array[PLUGIN_DISPLAY_VERSION]);
 
-  $plugin_structure['QSModifiedDate'] = $plugin_array[PLUGIN_MOD_DATE]->format("c");
+  $plugin_structure['QSModifiedDate'] = $plugin_array[PLUGIN_MOD_DATE]->format("Y-m-d h:m:s O"); // 2005-04-27 12:05:01 -0800
 
   /* Fetch Info.plist parts */
   $info_plist = $plugin->plugin_file("qsinfo");
