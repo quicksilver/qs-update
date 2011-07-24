@@ -39,7 +39,7 @@ $version = sprintf("%x", $version);
 
 $sids = @$_GET['sids'];
 if ($sids) {
-  $sids = explode(", ", $sids);
+  $sids = explode(",", $sids);
 }
 
 debug("asOfDate: $asOfDate, version: $version, updated: " . ($updated ? "yes" : "no") . ", full index: " . ($shouldSendFullIndex ? "yes" : "no") . ", sids: $sids");
