@@ -159,10 +159,10 @@ class Plugin {
 		return "{$this->identifier}" . ($add_version ? "__{$this->version}" : "") . ".$ext";
 	}
 
-	function image_file() {
-		$glob_file = glob_file("../update/images/", $this->file_name("{jpg,png}", false));
-		if (!$glob_file)
-			$glob_name = file_root("../update/images/noicon.png");
+	function image_file($glob = false) {
+		$glob_file = glob_file("../update/images/", $this->file_name("{jpg,png}", false), $glob);
+		if (!file_exists($glob_file))
+			$glob_file = file_root("../update/images/noicon.png");
 		return $glob_file;
 	}
 
@@ -230,7 +230,7 @@ class Plugin {
 		return $array;
 	}
 
-	function create($archive_file, $info_file) {
+	function create($archive_file, $info_file, $image_file = null) {
 	  debug("Plugins#create: new Plugin => \"$this\": " . dump_str($this->dict));
 
 		$keys = array("identifier", "host", "version", "name", "displayVersion", "modDate", "level");
@@ -257,8 +257,8 @@ class Plugin {
 		/* Move our uploaded files to their final location */
 		$plugin_path = $this->plugin_file("qspkg", false);
 		$info_plist_path = $this->plugin_file("qsinfo", false);
+		$image_path = $this->image_file(false);
 
-		/* TODO: What about the image file ? */
 		if (!@move_uploaded_file($archive_file, $plugin_path)) {
 			error("Can't move \"$archive_file\" to \"$plugin_path\"");
 			$this->delete();
@@ -267,6 +267,12 @@ class Plugin {
 
 		if (!@move_uploaded_file($info_file, $info_plist_path)) {
 			error("Can't move \"$info_file\" to \"$info_plist_path\"");
+			$this->delete();
+			return false;
+		}
+
+		if ($image_file && !@move_uploaded_file($image_file, $image_path)) {
+			error("Can't move \"$image_file\" to \"$image_path\"");
 			$this->delete();
 			return false;
 		}
