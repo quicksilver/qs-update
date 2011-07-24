@@ -12,8 +12,16 @@ $shouldSendFullIndex = false;
 $updated = false;
 $version = null;
 
+$updateVersion = @$_GET['updateVersion'];
+if ($updateVersion) {
+  $version = $updateVersion;
+  $updated = true;
+} else {
+  $version = @$_GET['qsversion'];
+}
+
 $asOfDate = @$_GET['asOfDate'];
-if ($asOfDate) {
+if ($asOfDate && !$updated) {
   $date = array();
   if(preg_match_all("/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/", $asOfDate, $date)) {
     $asOfDate = mktime(	$date[4][0], $date[5][0], $date[6][0],
@@ -25,14 +33,6 @@ if ($asOfDate) {
 }
 if (!$asOfDate)
   $shouldSendFullIndex = true;
-
-$updateVersion = @$_GET['updateVersion'];
-if ($updateVersion) {
-  $version = $updateVersion;
-  $updated = true;
-} else {
-  $version = @$_GET['qsversion'];
-}
 
 /* Convert the hexString back in an integer */
 $version = sprintf("%x", $version);
@@ -51,7 +51,7 @@ $criteria[PLUGIN_HOST] = QS_ID;
 if ($version)
   $criteria[PLUGIN_HOST_VERSION] = $version;
 
-if ($asOfDate)
+if ($asOfDate) /* Provide a full list after an update */
   $criteria[PLUGIN_MOD_DATE] = $asOfDate;
 
 /* FIXME: sids */
