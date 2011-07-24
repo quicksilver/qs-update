@@ -16,6 +16,8 @@ define("LEVEL_NORMAL",	0);
 define("LEVEL_PRE",			1);
 define("LEVEL_DEV",			2);
 
+define("PLUGIN_TABLE", "plugins");
+
 class Plugin {
 	static private $plugins = null;
 
@@ -67,7 +69,7 @@ class Plugin {
 		$where = self::parseCriterias($criterias);
 		if (!$order_by)
 			$order_by = PLUGIN_MOD_DATE . " DESC";
-		$sql = "SELECT DISTINCT identifier FROM plugins WHERE $where ORDER BY $order_by;";
+		$sql = "SELECT DISTINCT identifier FROM " . PLUGIN_TABLE . " WHERE $where ORDER BY $order_by;";
 		$recs = fetch_db($sql);
 		if (!$recs)
 			return array();
@@ -95,7 +97,7 @@ class Plugin {
 		}
 		$where = self::parseCriterias($criterias);
 		/* Fetch the latest item first, so it can be the first one reconstructed */
-		$sql = "SELECT * FROM plugins WHERE $where ORDER BY version DESC;";
+		$sql = "SELECT * FROM " . PLUGIN_TABLE . " WHERE $where ORDER BY version DESC;";
 		$recs = fetch_db($sql);
 		if ($recs === false)
 			return null;
@@ -245,7 +247,7 @@ class Plugin {
 		$keys = implode(", ", $keys);
 		$values = implode(", ", $values);
 
-		$sql = "INSERT INTO plugins ($keys) VALUES ($values);";
+		$sql = "INSERT INTO " . PLUGIN_TABLE . " ($keys) VALUES ($values);";
 		if (!query_db($sql)) {
 			error("Failed executing SQL: \"$sql\"");
 			return false;
@@ -281,7 +283,7 @@ class Plugin {
 			}
 			$props[] = "modDate = NOW()";
 			$props = implode(", ", $props);
-			$sql = "UPDATE plugins SET $props WHERE identifier = \"$this->identifier\" AND version = $this->version;";
+			$sql = "UPDATE " . PLUGIN_TABLE . " SET $props WHERE identifier = \"$this->identifier\" AND version = $this->version;";
 			if (!query_db($sql)) {
 				error("Failed executing SQL: \"$sql\"");
 				return false;
@@ -295,7 +297,7 @@ class Plugin {
 	function delete() {
 		$id = $this->identifier;
 		$version = $this->version;
-		$sql = "DELETE FROM plugins WHERE identifier = " . quote_db($id) . " AND version = " . quote_db($version) . ";";
+		$sql = "DELETE FROM " . PLUGIN_TABLE . " WHERE identifier = " . quote_db($id) . " AND version = " . quote_db($version) . ";";
 		if (!query_db($sql)) {
 			error("Failed deletion of plugin \"$id\", version \"$version\", SQL: \"$sql\"");
 			return false;
