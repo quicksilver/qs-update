@@ -1,19 +1,20 @@
 <?php
 
-define("PLUGIN_ID",					"id");
+define("PLUGIN_ID",							"id");
 define("PLUGIN_IDENTIFIER",			"identifier");
-define("PLUGIN_HOST",				"host");
-define("PLUGIN_NAME",				"name");
-define("PLUGIN_VERSION",			"version");
+define("PLUGIN_HOST",						"host");
+define("PLUGIN_NAME",						"name");
+define("PLUGIN_VERSION",				"version");
 define("PLUGIN_DISPLAY_VERSION",	"displayVersion");
-define("PLUGIN_SECRET", 			"secret");
-define("PLUGIN_LEVEL", 				"level");
-define("PLUGIN_HOST_VERSION", 		"hostVersion");
+define("PLUGIN_SECRET", 				"secret");
+define("PLUGIN_LEVEL", 					"level");
+define("PLUGIN_HOST_VERSION", 	"hostVersion");
 define("PLUGIN_MOD_DATE", 			"modDate");
+define("PLUGIN_SYSTEM_VERSION", "systemVersion");
 
 define("LEVEL_NORMAL",	0);
-define("LEVEL_PRE",		1);
-define("LEVEL_DEV",		2);
+define("LEVEL_PRE",			1);
+define("LEVEL_DEV",			2);
 
 class Plugin {
 	static private $plugins = null;
@@ -39,6 +40,9 @@ class Plugin {
 					break;
 				case PLUGIN_HOST_VERSION:
 					$where[$criteria]= "(minHostVersion <= \"$value\" OR ISNULL(minHostVersion)) AND (maxHostVersion > \"$value\" OR ISNULL(maxHostVersion))";
+					break;
+				case PLUGIN_SYSTEM_VERSION:
+					$where[$criteria]= "(minSystemVersion <= \"$value\" OR ISNULL(minSystemVersion)) AND (maxSystemVersion > \"$value\" OR ISNULL(maxSystemVersion))";
 					break;
 				case PLUGIN_MOD_DATE:
 					$where[$criteria]= "(modDate > \"$value\" OR ISNULL(modDate))";
@@ -130,8 +134,8 @@ class Plugin {
 
 	function __tostring() {
 		$version_str = " version: " . $this->displayVersion();
-		$host_str = $this->host ? " (host $this->host)" : "";
-		return "Plugin $this->name ($this->identifier)$version_str$host_str";
+		$host_str = $this->host ? " (host: $this->host)" : "";
+		return "$this->name ($this->identifier)$version_str$host_str";
 	}
 
 	function __get($key) {
@@ -154,14 +158,14 @@ class Plugin {
 	}
 
 	function image_file() {
-		$glob_file = glob_file("../plugins/images/", $this->file_name("{jpg,png}", false));
+		$glob_file = glob_file("../update/images/", $this->file_name("{jpg,png}", false));
 		if (!$glob_file)
-			$glob_name = file_root("../plugins/images/noicon.png");
+			$glob_name = file_root("../update/images/noicon.png");
 		return $glob_file;
 	}
 
 	function plugin_file($ext = "qspkg", $glob = true) {
-		return glob_file("../plugins/files/", $this->file_name($ext), $glob);
+		return glob_file("../update/files/", $this->file_name($ext), $glob);
 	}
 
 	function plist_file() {
@@ -224,9 +228,12 @@ class Plugin {
 		return $array;
 	}
 
-	function create() {
-		$keys = array("identifier", "host", "version", "name", "displayVersion", "modDate");
+	function create($archive_file, $info_file) {
+	  debug("Plugins#create: new Plugin => \"$this\": " . dump_str($this->dict));
+
+		$keys = array("identifier", "host", "version", "name", "displayVersion", "modDate", "level");
 		$keys = array_unique(array_merge($keys, $this->dirtyProperties));
+
 		foreach ($keys as $key) {
 			$val = null;
 			if ($key == "modDate")
@@ -237,16 +244,37 @@ class Plugin {
 		}
 		$keys = implode(", ", $keys);
 		$values = implode(", ", $values);
+
 		$sql = "INSERT INTO plugins ($keys) VALUES ($values);";
-		if (query_db($sql)) {
-			$this->dirtyProperties = array();
-			return true;
+		if (!query_db($sql)) {
+			error("Failed executing SQL: \"$sql\"");
+			return false;
 		}
-		return false;
+		$this->dirtyProperties = array();
+
+		/* Move our uploaded files to their final location */
+		$plugin_path = $this->plugin_file("qspkg", false);
+		$info_plist_path = $this->plugin_file("qsinfo", false);
+
+		/* TODO: What about the image file ? */
+		if (!@move_uploaded_file($archive_file, $plugin_path)) {
+			error("Can't move \"$archive_file\" to \"$plugin_path\"");
+			$this->delete();
+			return false; 
+		}
+
+		if (!@move_uploaded_file($info_file, $info_plist_path)) {
+			error("Can't move \"$info_file\" to \"$info_plist_path\"");
+			$this->delete();
+			return false;
+		}
+		
+		return true;
 	}
 
 	function save() {
 		if (count($this->dirtyProperties)) {
+			debug("Plugin#save: \"$this\"");
 			$props = array();
 			foreach ($this->dirtyProperties as $key) {
 				$props[] = "$prop = " . quote_db($this->$key);
@@ -254,12 +282,27 @@ class Plugin {
 			$props[] = "modDate = NOW()";
 			$props = implode(", ", $props);
 			$sql = "UPDATE plugins SET $props WHERE identifier = \"$this->identifier\" AND version = $this->version;";
-			if (query_db($sql)) {
-				$this->dirtyProperties = array();
-				return true;
+			if (!query_db($sql)) {
+				error("Failed executing SQL: \"$sql\"");
+				return false;
 			}
+			
+			$this->dirtyProperties = array();
+			return true;
+		}
+	}
+
+	function delete() {
+		$id = $this->identifier;
+		$version = $this->version;
+		$sql = "DELETE FROM plugins WHERE identifier = " . quote_db($id) . " AND version = " . quote_db($version) . ";";
+		if (!query_db($sql)) {
+			error("Failed deletion of plugin \"$id\", version \"$version\", SQL: \"$sql\"");
 			return false;
 		}
+
+		/* TODO: Delete files */
+		return true;
 	}
 }
 

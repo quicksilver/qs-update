@@ -60,6 +60,6 @@ if ($type == "app") {
     http_error(500, "File not found");
   send_file($file);
 } else {
-
+  http_error(400, "Unknown update requested");
 }
 ?>

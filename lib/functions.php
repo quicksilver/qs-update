@@ -29,9 +29,8 @@ function close_db() {
 	return mysql_close(connect_db());
 }
 
-function quote_db($obj)
-{
-  if ($obj == null)
+function quote_db($obj) {
+  if ($obj === null)
     return "NULL";
   if (is_string($obj)) {
     if ($obj == "NULL")
@@ -39,7 +38,7 @@ function quote_db($obj)
     if ($obj == "")
       return "\"\"";
     connect_db();
-    return mysql_real_escape_string($obj);
+    return '"' . mysql_real_escape_string($obj) . '"';
   } else if (is_bool($obj)) {
     return $obj ? 1 : 0;
   } else {
@@ -78,8 +77,8 @@ function puts($str = null) {
     echo $str . "<br />\n";
 }
 
-define("LGLVL_DEBUG", 0);
-define("LGLVL_ERROR", 5);
+define("LGLVL_DEBUG", E_USER_NOTICE);
+define("LGLVL_ERROR", E_USER_ERROR);
 
 $current_level = LGLVL_DEBUG;
 
@@ -93,33 +92,34 @@ function set_log_level($level) {
   $current_level = $level;
 }
 
-function qslog($level, $str = null) {
+function qslog($level, $str) {
   if ($level <= log_level()) {
-    puts($str);
-    if ($level == LGLVL_ERROR)
-      debug_print_backtrace();
+    error_log($str, 0);
   }
 }
 
-function debug($str = null) {
+function debug($str) {
   qslog(LGLVL_DEBUG, $str);
 }
 
-function error($str = null) {
+function error($str) {
   qslog(LGLVL_ERROR, $str);
 }
 
 function http_error($code, $msg) {
-  header("HTTP $code $msg");
-  echo $msg;
-  die();
+  header("HTTP/ $code $msg");
+  die("<h1>$code - $msg</h1>");
 }
 
-function dump($obj) {
+function dump_str($obj) {
   ob_start();
   var_dump($obj);
   $str = ob_get_clean();
-  debug($str);
+  return $str;
+}
+
+function dump($obj) {
+  debug(dump_str($obj));
 }
 
 /** Utilities */

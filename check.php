@@ -32,5 +32,6 @@ $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id, $criterias);
 if (!$plugin)
   http_error(500, "Plugin id \"$id\" not found");
 
+/* FIXME: Check the weird hexString thingy. I guess QS will expect that... */
 echo $plugin->version;
 ?>
