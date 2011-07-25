@@ -1,16 +1,20 @@
 <?php
 
-define("PLUGIN_ID",							"id");
-define("PLUGIN_IDENTIFIER",			"identifier");
-define("PLUGIN_HOST",						"host");
-define("PLUGIN_NAME",						"name");
-define("PLUGIN_VERSION",				"version");
+define("PLUGIN_ID",								"id");
+define("PLUGIN_IDENTIFIER",				"identifier");
+define("PLUGIN_HOST",							"host");
+define("PLUGIN_NAME",							"name");
+define("PLUGIN_VERSION",					"version");
 define("PLUGIN_DISPLAY_VERSION",	"displayVersion");
-define("PLUGIN_SECRET", 				"secret");
-define("PLUGIN_LEVEL", 					"level");
-define("PLUGIN_HOST_VERSION", 	"hostVersion");
-define("PLUGIN_MOD_DATE", 			"modDate");
-define("PLUGIN_SYSTEM_VERSION", "systemVersion");
+define("PLUGIN_DESCRIPTION",			"description");
+define("PLUGIN_AUTHOR",						"author");
+define("PLUGIN_CATEGORIES",				"categories");
+define("PLUGIN_SECRET",						"secret");
+define("PLUGIN_LEVEL",						"level");
+define("PLUGIN_HOST_VERSION",			"hostVersion");
+define("PLUGIN_SYSTEM_VERSION",		"systemVersion");
+define("PLUGIN_MOD_DATE",					"modDate");
+define("PLUGIN_DOWNLOAD_COUNT",		"downloads");
 
 define("LEVEL_NORMAL",	0);
 define("LEVEL_PRE",			1);
