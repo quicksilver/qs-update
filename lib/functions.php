@@ -200,6 +200,15 @@ function send_file($file, $name = null, $redirect = true) {
   }
 }
 
+function hexstring_to_int($string) {
+  sscanf($string, "%X", $int);
+  return $int;
+}
+
+function int_to_hexstring($int) {
+  return sprintf("%X", $int);
+}
+
 function outputPlugins()
 {
 

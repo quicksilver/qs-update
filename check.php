@@ -13,6 +13,8 @@ $id = QS_ID;
 $type = @$_GET['type'];
 $current = @$_GET['current'];
 
+$current = hexstring_to_int($current);
+
 $level = null;
 switch ($type) {
   case "dev":
@@ -32,6 +34,5 @@ $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id, $criterias);
 if (!$plugin)
   http_error(500, "Plugin id \"$id\" not found");
 
-/* FIXME: Check the weird hexString thingy. I guess QS will expect that... */
-echo $plugin->version;
+echo int_to_hexstring($plugin->version);
 ?>

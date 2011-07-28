@@ -57,7 +57,7 @@ if (@$_POST['submit'] == "New") {
   $plugin_rec[PLUGIN_IDENTIFIER] = $dict->get('CFBundleIdentifier')->getValue();
   $plugin_rec[PLUGIN_HOST] = $host;
   $plugin_rec[PLUGIN_NAME] = $dict->get('CFBundleName')->getValue();
-  $plugin_rec[PLUGIN_VERSION] = $dict->get('CFBundleVersion')->getValue();
+  $plugin_rec[PLUGIN_VERSION] = hexstring_to_int($dict->get('CFBundleVersion')->getValue());
   if ($mod_date)
     $plugin_rec[PLUGIN_MOD_DATE] = $mod_date;
   if ($dict->get('CFBundleShortVersionString'))

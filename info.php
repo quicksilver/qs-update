@@ -35,7 +35,7 @@ if (!$asOfDate)
   $shouldSendFullIndex = true;
 
 /* Convert the hexString back in an integer */
-$version = sprintf("%x", $version);
+$version = hexstring_to_int($version);
 
 $sids = @$_GET['sids'];
 if ($sids) {
@@ -69,7 +69,7 @@ foreach ($query as $plugin) {
   $plugin_structure = array();
   $plugin_structure['CFBundleIdentifier'] = $plugin_array[PLUGIN_IDENTIFIER];
   $plugin_structure['CFBundleName'] = $plugin_array[PLUGIN_NAME];
-  $plugin_structure['CFBundleVersion'] = $plugin_array[PLUGIN_VERSION];
+  $plugin_structure['CFBundleVersion'] = new CFString(int_to_hexstring($plugin_array[PLUGIN_VERSION]));
 
   if (isset($plugin_array[PLUGIN_DISPLAY_VERSION]))
     $plugin_structure['CFBundleShortVersionString'] = new CFString($plugin_array[PLUGIN_DISPLAY_VERSION]);
