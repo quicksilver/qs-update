@@ -55,10 +55,8 @@ if ($type == "app") {
   }
 } else if ($type == "plugin") {
   /* Build a path to this plugin dmg */
-  $file = $plugin->plugin_url();
-  if (!$file)
+  if (!$plugin->download())
     http_error(500, "File not found");
-  send_file($file);
 } else {
   http_error(400, "Unknown update requested");
 }

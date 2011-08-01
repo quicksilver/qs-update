@@ -316,6 +316,25 @@ class Plugin {
     /* TODO: Delete files */
     return true;
   }
+
+  function download() {
+    debug("Plugin#download: \"$this\"");
+    $file = $this->plugin_url();
+    if (!$file) {
+      error("Plugin archive for \"$this\" not found");
+      return false;
+    }
+
+    $id = quote_db($this->identifier);
+    $version = quote_db($this->version);
+    $sql = "UPDATE LOW_PRIORITY " . PLUGIN_TABLE . " SET downloads = downloads + 1 WHERE identifier = $id AND version = $version";
+    if (!query_db($sql)) {
+      error("Failed updating download count for \"$this\"");
+      return false;
+    }
+
+    send_file($file);
+  }
 }
 
 ?>
