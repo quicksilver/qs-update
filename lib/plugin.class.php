@@ -293,7 +293,10 @@ class Plugin {
       }
       $props[] = "modDate = NOW()";
       $props = implode(", ", $props);
-      $sql = "UPDATE " . PLUGIN_TABLE . " SET $props WHERE identifier = \"$this->identifier\" AND version = $this->version;";
+
+      $id = quote_db($this->identifier);
+      $version = quote_db($this->version);
+      $sql = "UPDATE " . PLUGIN_TABLE . " SET $props WHERE identifier = $id AND version = $version;";
       if (!query_db($sql)) {
         error("Failed executing SQL: \"$sql\"");
         return false;
@@ -305,11 +308,11 @@ class Plugin {
   }
 
   function delete() {
-    $id = $this->identifier;
-    $version = $this->version;
-    $sql = "DELETE FROM " . PLUGIN_TABLE . " WHERE identifier = " . quote_db($id) . " AND version = " . quote_db($version) . ";";
+    $id = quote_db($this->identifier);
+    $version = quote_db($this->version);
+    $sql = "DELETE FROM " . PLUGIN_TABLE . " WHERE identifier = $id AND version = $version;";
     if (!query_db($sql)) {
-      error("Failed deletion of plugin \"$id\", version \"$version\", SQL: \"$sql\"");
+      error("Failed deletion of \"$this\", SQL: \"$sql\"");
       return false;
     }
 

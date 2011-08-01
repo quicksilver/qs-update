@@ -103,7 +103,7 @@ if (@$_POST['submit'] == "New") {
   <body>
     <form name="plugin_add" method="post" enctype="multipart/form-data">
       <input type="hidden" name="host" value="<?php echo QS_ID;?>" />
-    <label for="plugin_archive_file">Plugin ditto archive :</label>
+      <label for="plugin_archive_file">Plugin ditto archive :</label>
       <input id="plugin_archive_file" name="plugin_archive_file" type="file"/><br />
       <label for="info_plist_file">Plugin Info.plist :</label>
       <input id="info_plist_file" name="info_plist_file" type="file"/><br />
