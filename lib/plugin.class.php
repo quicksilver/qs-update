@@ -242,7 +242,7 @@ class Plugin {
 
     foreach ($keys as $key) {
       $val = null;
-      if ($key == "modDate")
+      if ($key == "modDate" && !$this->$key)
         $val = "NOW()";
       else
         $val = quote_db($this->$key);
