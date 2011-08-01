@@ -76,6 +76,14 @@ if (@$_POST['submit'] == "New") {
     $secret = $plugin_info->get('secret');
     if ($secret)
       $plugin_rec[PLUGIN_SECRET] = $secret->getValue();
+
+    $author = $plugin_info->get('author');
+    if ($author)
+      $plugin_rec[PLUGIN_AUTHOR] = $author->getValue();
+
+    $desc = $plugin_info->get('description');
+    if ($desc)
+      $plugin_rec[PLUGIN_DESCRIPTION] = $desc->getValue();
   }
 
   debug("Plugin record generated: " . dump_str($plugin_rec));
