@@ -316,7 +316,20 @@ class Plugin {
       return false;
     }
 
-    /* TODO: Delete files */
+    /* Delete files */
+    $plugin_path = $this->plugin_file("qspkg", false);
+    $info_plist_path = $this->plugin_file("qsinfo", false);
+    $image_path = $this->image_file(false);
+
+    if (file_exists($plugin_path))
+      unlink($plugin_path);
+
+    if (file_exists($info_plist_path))
+      unlink($info_plist_path);
+
+    if (file_exists($image_path))
+      unlink($image_path);
+
     return true;
   }
 
