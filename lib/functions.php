@@ -131,11 +131,21 @@ function dump($obj) {
  * example:
  * web_root("images/my_image.png") => "/mysite/images/my_image.png"
  */
-function web_root($file) {
+function web_root($file, $__file__ = null) {
   if ($file == null)
     return $file;
+
+  if ($__file__ == null)
+    $__file__ = $_SERVER['PHP_SELF'];
+
   $doc_root = $_SERVER['DOCUMENT_ROOT'];
-  $self_parts = explode("/", dirname($_SERVER['PHP_SELF']));
+
+  // Remove the doc root from the file
+  if (strpos($__file__, $doc_root) === 0) {
+    $__file__ = substr($__file__, strlen($doc_root), strlen($__file__));
+  }
+
+  $self_parts = explode("/", dirname($__file__));
   $file_parts = explode("/", $file);
   $parts = array(""); // Path must always start with a /
 
@@ -168,12 +178,12 @@ function web_root($file) {
  * file_root("my_dir") => "/var/www/mysite/my_dir"
  *
  */
-function file_root($file) {
-  return $_SERVER['DOCUMENT_ROOT'] . web_root($file);
+function file_root($file, $__file__ = null) {
+  return $_SERVER['DOCUMENT_ROOT'] . web_root($file, $__file__);
 }
 
-function glob_file($dir, $glob, $call_glob = true) {
-  $file_path = file_root($dir) . (strrpos($dir, "/") != strlen($dir) ? '/' : '') . $glob;
+function glob_file($dir, $glob, $call_glob = true, $__file__ = null) {
+  $file_path = file_root($dir, $__file__) . (strrpos($dir, "/") != strlen($dir) ? '/' : '') . $glob;
   if (!$call_glob)
     return $file_path;
   $globs = glob($file_path, GLOB_BRACE);

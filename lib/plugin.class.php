@@ -164,14 +164,13 @@ class Plugin {
   }
 
   function image_file($glob = false) {
-    $glob_file = glob_file("../update/images/", $this->file_name("{jpg,png}", false), $glob);
-    if (!file_exists($glob_file))
-      $glob_file = file_root("../update/images/noicon.png");
-    return $glob_file;
+    $file_name = $this->file_name("{jpg,png}", false);
+    return glob_file("../images/plugins", $file_name, $glob, __FILE__);
   }
 
   function plugin_file($ext = "qspkg", $glob = true) {
-    return glob_file("../update/files/", $this->file_name($ext), $glob);
+    $file_name = $this->file_name("qspkg", true);
+    return glob_file("../update/files", $file_name, $glob, __FILE__);
   }
 
   function plist_file() {
@@ -179,15 +178,15 @@ class Plugin {
   }
 
   function image_url() {
-    return web_root($this->image_file());
+    return web_root($this->image_file(), __FILE__);
   }
 
   function plugin_url($ext = "qspkg") {
-    return web_root($this->plugin_file($ext));
+    return web_root($this->plugin_file($ext), __FILE__);
   }
 
   function plist_url() {
-    return web_root($this->plugin_file("qsinfo"));
+    return web_root($this->plugin_file("qsinfo"), __FILE__);
   }
 
   function versions() {
