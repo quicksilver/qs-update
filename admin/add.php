@@ -16,6 +16,7 @@ if (@$_POST['submit'] == "New") {
   $archive_file = @$_FILES["plugin_archive_file"];
   $info_file = @$_FILES["info_plist_file"];
   $image_file = @$_FILES["image_file"];
+  $image_ext = @$_POST['image_ext'];
 
   if ($archive_file["error"] !== 0)
     http_error(400, "Missing plugin_archive_file");
@@ -90,7 +91,14 @@ if (@$_POST['submit'] == "New") {
 
   /* Create the plugin */
   $plugin = new Plugin($plugin_rec);
-  if (!$plugin->create($archive_file['tmp_name'], $info_file['tmp_name'], $image_file ? $image_file['tmp_name'] : null))
+  $create_options = array(
+    'archive_file' => $archive_file['tmp_name'],
+    'info_file' => $info_file['tmp_name'],
+    'image_file' => $image_file ? $image_file['tmp_name'] : null,
+    'image_ext' => $image_ext,
+  );
+
+  if (!$plugin->create($create_options))
     http_error(500, "Failed creation of plugin");
 
   http_error(200, "OK");

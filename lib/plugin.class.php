@@ -163,9 +163,9 @@ class Plugin {
     return "{$this->identifier}" . ($add_version ? "__{$this->version}" : "") . ".$ext";
   }
 
-  function image_file($glob = false) {
-    $file_name = $this->file_name("{jpg,png}", false);
-    return glob_file("../images/plugins", $file_name, $glob, __FILE__);
+  function image_file($ext = "*") {
+    $file_name = $this->file_name($ext, false);
+    return glob_file("../images/plugins", $file_name, $ext == "*", __FILE__);
   }
 
   function plugin_file($ext = "qspkg", $glob = true) {
@@ -233,8 +233,14 @@ class Plugin {
     return $array;
   }
 
-  function create($archive_file, $info_file, $image_file = null) {
-    debug("Plugins#create: new Plugin => \"$this\": " . dump_str($this->dict));
+  function create($options = array()) {
+    debug("Plugin#create: new Plugin => \"$this\": " . dump_str($this->dict));
+    debug("Plugin#create: options: " . dump_str($options));
+
+    $archive_file = $options['archive_file'];
+    $info_file = $options['info_file'];
+    $image_file = $options['image_file'];
+    $image_ext = $options['image_ext'];
 
     $keys = array("identifier", "host", "version", "name", "displayVersion", "modDate", "level");
     $keys = array_unique(array_merge($keys, $this->dirtyProperties));
@@ -260,7 +266,7 @@ class Plugin {
     /* Move our uploaded files to their final location */
     $plugin_path = $this->plugin_file("qspkg", false);
     $info_plist_path = $this->plugin_file("qsinfo", false);
-    $image_path = $this->image_file(false);
+    $image_path = $this->image_file($image_ext);
 
     if (!@move_uploaded_file($archive_file, $plugin_path)) {
       error("Can't move \"$archive_file\" to \"$plugin_path\"");
@@ -279,7 +285,7 @@ class Plugin {
       $this->delete();
       return false;
     }
-    
+
     return true;
   }
 
