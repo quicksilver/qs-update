@@ -100,8 +100,8 @@ if (@$_POST['submit'] == "New") {
 
   if (!$plugin->create($create_options))
     http_error(500, "Failed creation of plugin");
-
-  http_error(200, "OK");
+  else
+    http_error(200, "OK");
 }
 ?><html>
   <head>
