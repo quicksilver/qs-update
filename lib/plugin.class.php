@@ -169,12 +169,12 @@ class Plugin {
   }
 
   function plugin_file($ext = "qspkg", $glob = true) {
-    $file_name = $this->file_name("qspkg", true);
+    $file_name = $this->file_name($ext, true);
     return glob_file("../update/files", $file_name, $glob, __FILE__);
   }
 
-  function plist_file() {
-    return $this->plugin_file("qsinfo");
+  function plist_file($glob = true) {
+    return $this->plugin_file("qsinfo", $glob);
   }
 
   function image_url() {
@@ -186,7 +186,7 @@ class Plugin {
   }
 
   function plist_url() {
-    return web_root($this->plugin_file("qsinfo"), __FILE__);
+    return web_root($this->plist_file(), __FILE__);
   }
 
   function versions() {
@@ -265,22 +265,22 @@ class Plugin {
 
     /* Move our uploaded files to their final location */
     $plugin_path = $this->plugin_file("qspkg", false);
-    $info_plist_path = $this->plugin_file("qsinfo", false);
+    $info_plist_path = $this->plist_file(false);
     $image_path = $this->image_file($image_ext);
 
-    if (!@move_uploaded_file($archive_file, $plugin_path)) {
+    if (!move_uploaded_file($archive_file, $plugin_path)) {
       error("Can't move \"$archive_file\" to \"$plugin_path\"");
       $this->delete();
       return false; 
     }
 
-    if (!@move_uploaded_file($info_file, $info_plist_path)) {
+    if (!move_uploaded_file($info_file, $info_plist_path)) {
       error("Can't move \"$info_file\" to \"$info_plist_path\"");
       $this->delete();
       return false;
     }
 
-    if ($image_file && !@move_uploaded_file($image_file, $image_path)) {
+    if ($image_file && !move_uploaded_file($image_file, $image_path)) {
       error("Can't move \"$image_file\" to \"$image_path\"");
       $this->delete();
       return false;
