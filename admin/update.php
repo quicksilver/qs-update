@@ -3,38 +3,25 @@
 include('../lib/functions.php');
 
 $submit = @$_GET['submit'];
+
 $id = @$_GET['id'];
 if (!$id)
   $id = @$_POST['id'];
+
 $name = @$_GET['name'];
 if (!$name)
   $name = @$_POST['name'];
+
 $version = @$_GET['version'];
 if (!$version)
   $version = @$_POST['version'];
-$plugin = null;
+
+$plugin = Plugin::get(PLUGIN_IDENTIFIER, $id);
 
 switch ($submit) {
-  case "Search":
-    $plugin = null;
-    if ($id)
-      $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id);
-
-    if (!$plugin && $name)
-      $plugin = Plugin::get(PLUGIN_NAME, $name);
-    
-    if ($plugin && $version) {
-      debug("version $version");
-      if ($plugin->version !== $version)
-        $plugin = $plugin->versions[$version];
-    }
-
-  break;
   case "Update":
-    $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id);
 
     if ($plugin && $version) {
-      debug("version $version");
       if ($plugin->version !== $version)
         $plugin = $plugin->versions[$version];
     }
@@ -43,43 +30,37 @@ switch ($submit) {
     $level = @$_GET['level'];
     $minHostVersion = @$_GET['minHostVersion'];
     $maxHostVersion = @$_GET['maxHostVersion'];
+    
     $plugin->name = $name;
     if ($displayVersion)
       $plugin->displayVersion = $displayVersion;
 
     if ($level)
       $plugin->level = $level;
-    
+
     if ($minHostVersion)
       $plugin->minHostVersion = $minHostVersion;
-    
+
     if ($maxHostVersion)
       $plugin->maxHostVersion = $maxHostVersion;
 
     $plugin->save();
-  break;
-  case "New":
-
+    /* TODO: error-checking */
   break;
 }
 
-dump($plugin);
-
-?>
+?><!DOCTYPE html>
 <html>
-<head></head>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <title>Editing <?= $plugin->name ?></title>
+</head>
 <body>
-  <form name="search_plugin">
-    <label for="id">ID :</label>
-    <input id="id" name="id" value="<?php echo $id; ?>" /><br />
-    <label for="name">Name :</label>
-    <input id="name" name="name" value="<?php echo $name; ?>" /><br />
-    <input type="submit" name="submit" value="Search" />
-  </form>
+  <h1>Editing <?= $plugin->name ?></h1>
   <?php
-  if (!$plugin)
-    echo "No plugin found !";
-  else {
+  if (!$plugin) {
+    echo "<p>No plugin found with identifier $id !</p>";
+  } else {
   ?>
   <form name="plugin_edit" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $plugin->identifier; ?>" />

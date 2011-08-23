@@ -4,7 +4,7 @@ include('../lib/functions.php');
 
 $import = @$_POST['import'];
 $host = @$_POST['host'];
-if (!$host)
+if ($host === null)
   $host = QS_ID;
 
 $mod_date = @$_POST['mod_date'];
@@ -29,6 +29,7 @@ if (@$_POST['submit'] == "New") {
   * is useless
   */
   try {
+    ob_start();
     $plist = new CFPropertyList();
     $plist_content = null;
 
@@ -43,15 +44,19 @@ if (@$_POST['submit'] == "New") {
       $plist_content = file_get_contents($info_file['tmp_name']);
     }
     $plist->parse($plist_content);
+    ob_end_clean();
   }
   catch (DOMException $e) {
-    http_error(400, "Exception: $e");
+    error("Exception while parsing: $e");
+    http_error(400, "Exception while parsing plist !");
   }
 
   if (!$plist)
     http_error(400, "Failed to parse plist");
 
   $dict = $plist->getValue(true);
+
+  debug("Add: $archive_file, $info_file, $image_file, $image_ext, for $host, plist: " . dump_str($dict));
 
   /* Build our plugin record */
   $plugin_rec = array();
@@ -62,7 +67,7 @@ if (@$_POST['submit'] == "New") {
   if ($mod_date)
     $plugin_rec[PLUGIN_MOD_DATE] = $mod_date;
   if ($dict->get('CFBundleShortVersionString'))
-    $plugin_rec[PLUGIN_DISPLAY_VERSION] = $dict->get('CFBundleShortVersionString')->getValue();
+    $plugin_rec[PLUGIN_DISPLAY_VERSION] = utf8_decode($dict->get('CFBundleShortVersionString')->getValue());
 
   $plugin_rec[PLUGIN_LEVEL] = LEVEL_NORMAL;
   $plugin_rec[PLUGIN_SECRET] = 0;
@@ -113,14 +118,16 @@ if (@$_POST['submit'] == "New") {
       <input type="hidden" name="host" value="<?php echo QS_ID;?>" />
       <label for="plugin_archive_file">Plugin ditto archive :</label>
       <input id="plugin_archive_file" name="plugin_archive_file" type="file"/><br />
+
       <label for="info_plist_file">Plugin Info.plist :</label>
       <input id="info_plist_file" name="info_plist_file" type="file"/><br />
+
       <label for="image_file">Plugin Icon :</label>
       <input id="image_file" name="image_file" type="file"/><br />
-      <input id="import" name="import" type="checkbox" />
-      <label for="import">Convert old qsinfo files</label><br />
-      <label for="date">Fake mod date to</label>
+
+      <label for="date">Update date (leave empty to use archive modification time) :</label>
       <input id="mod_date" name="mod_date" type="datetime" size="32"/><br />
+
       <input type="submit" name="submit" value="New" />
     </form>
   </body>
