@@ -2,7 +2,6 @@
 
 include('../lib/functions.php');
 
-$import = @$_POST['import'];
 $host = @$_POST['host'];
 if ($host === null)
   $host = QS_ID;
@@ -10,7 +9,6 @@ if ($host === null)
 $mod_date = @$_POST['mod_date'];
 if ($mod_date)
   $mod_date = strftime("%Y-%m-%d %H:%M:%S", strtotime($mod_date));
-$plist = null;
 
 if (@$_POST['submit'] == "New") {
   $archive_file = @$_FILES["plugin_archive_file"];
@@ -23,6 +21,7 @@ if (@$_POST['submit'] == "New") {
   if ($info_file["error"] !== 0)
     http_error(400, "Missing info_plist_file");
 
+  $plist = null;
   /* FIXME: Check mime-types / extensions */
   /* Extension preferred, because mime-type is told by client,
   * and usually default to application/octet-stream, which
@@ -30,19 +29,9 @@ if (@$_POST['submit'] == "New") {
   */
   try {
     ob_start();
-    $plist = new CFPropertyList();
-    $plist_content = null;
+    $plist_content = file_get_contents($info_file['tmp_name']);
 
-    if ($import) {
-      /* When importing the old qsinfo files miss the basic plist structure.
-      * Fix it before reading them
-      */
-      $plist_content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict>';
-      $plist_content .= file_get_contents($info_file['tmp_name']);
-      $plist_content .= "</dict></plist>";
-    } else {
-      $plist_content = file_get_contents($info_file['tmp_name']);
-    }
+    $plist = new CFPropertyList();
     $plist->parse($plist_content);
     ob_end_clean();
   }
