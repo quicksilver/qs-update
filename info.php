@@ -45,6 +45,12 @@ if ($sids) {
 debug("asOfDate: $asOfDate, version: $version, updated: " . ($updated ? "yes" : "no") . ", full index: " . ($shouldSendFullIndex ? "yes" : "no") . ", sids: $sids");
 debug("Agent: " . $_SERVER['HTTP_USER_AGENT']);
 
+if (preg_match_all("/.*OSX\/(\d{1,})\.(\d{1,})\.(\d{1,}).*/", $_SERVER['HTTP_USER_AGENT'], $version_parts)) {
+  $os_version = $version_parts[1][0] . "." . $version_parts[2][0] . "." . $version_parts[3][0];
+  debug("OS X Version: " . $os_version);
+  /* TODO: Use this */
+}
+
 $criteria = array();
 $criteria[PLUGIN_HOST] = QS_ID;
 
