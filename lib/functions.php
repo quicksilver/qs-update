@@ -107,6 +107,7 @@ function error($str) {
 }
 
 function http_error($code, $msg) {
+  error($msg);
   header("HTTP/ $code $msg");
   die("<h1>$code - $msg</h1>");
 }
