@@ -106,7 +106,7 @@ class Plugin {
     /* Fetch the latest item first, so it can be the first one reconstructed */
     $sql = "SELECT * FROM " . PLUGIN_TABLE . " WHERE $where ORDER BY version DESC;";
     $recs = fetch_db($sql);
-    if ($recs === false || count($recs) == 0)
+    if ($recs === false)
       return null;
     $plugin_rec = array_shift($recs);
     $versions = array();
