@@ -15,7 +15,7 @@ $version = null;
 $updateVersion = @$_GET['updateVersion'];
 if ($updateVersion) {
   $version = $updateVersion;
-  $updated = true;
+  $updated = true; /* Means QS was just updated */
 } else {
   $version = @$_GET['qsversion'];
 }
@@ -42,14 +42,16 @@ if ($sids) {
   $sids = explode(",", $sids);
 }
 
-debug("asOfDate: $asOfDate, version: $version, updated: " . ($updated ? "yes" : "no") . ", full index: " . ($shouldSendFullIndex ? "yes" : "no") . ", sids: $sids");
-debug("Agent: " . $_SERVER['HTTP_USER_AGENT']);
-
+$os_version = null;
 if (preg_match_all("/.*OSX\/(\d{1,})\.(\d{1,})\.(\d{1,}).*/", $_SERVER['HTTP_USER_AGENT'], $version_parts)) {
   $os_version = $version_parts[1][0] . "." . $version_parts[2][0] . "." . $version_parts[3][0];
-  debug("OS X Version: " . $os_version);
+  //debug("OS X Version: " . $os_version);
   /* TODO: Use this */
 }
+
+debug(__FILE__ . ": query: " . $_SERVER['QUERY_STRING']);
+debug(__FILE__ . ": asOfDate: $asOfDate, version: $version, updated: " . ($updated ? "yes" : "no") . ", full index: " . ($shouldSendFullIndex ? "yes" : "no") . ", sids: " . dump_str($sids));
+debug(__FILE__ . ": Agent: " . $_SERVER['HTTP_USER_AGENT'] . ", OS: $os_version");
 
 $criteria = array();
 $criteria[PLUGIN_HOST] = QS_ID;
