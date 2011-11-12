@@ -173,7 +173,7 @@ class Plugin {
 
   function plugin_file($ext = "qspkg", $glob = true) {
     $file_name = $this->file_name($ext, true);
-    return glob_file("../update/files", $file_name, $glob, __FILE__);
+    return "/home/qs/public_html/qs0/plugins/files/".$file_name;
   }
 
   function application_url($ext = "dmg") {
