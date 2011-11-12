@@ -74,8 +74,9 @@ class Plugin {
   static function query($criterias, $order_by = null) {
     $where = self::parseCriterias($criterias);
     if (!$order_by)
-      $order_by = PLUGIN_MOD_DATE . " DESC";
-    $sql = "SELECT DISTINCT identifier FROM " . PLUGIN_TABLE . " WHERE $where ORDER BY $order_by;";
+      $order_by = "name asc";
+    $sub_sql = "SELECT identifier AS id, MAX(version) AS maxversion FROM " . PLUGIN_TABLE . " WHERE $where GROUP BY id";
+    $sql = "SELECT identifier, version FROM " . PLUGIN_TABLE . " INNER JOIN ($sub_sql) AS sub ON sub.id = identifier AND maxversion = version ORDER BY $order_by";
     $recs = fetch_db($sql);
     if (!$recs)
       return array();
