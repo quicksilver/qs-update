@@ -78,9 +78,10 @@ function puts($str = null) {
 }
 
 define("LGLVL_DEBUG", E_USER_NOTICE);
+define("LGLVL_WARN", E_USER_WARNING);
 define("LGLVL_ERROR", E_USER_ERROR);
 
-$current_level = LGLVL_DEBUG;
+$current_level = LGLVL_WARN;
 
 function log_level() {
   global $current_level;
