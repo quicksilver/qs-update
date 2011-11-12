@@ -68,7 +68,7 @@ class Plugin {
   }
 
   static function all($secret = false, $level = LEVEL_NORMAL, $order_by = null) {
-    return self::query(array(PLUGIN_SECRET => $secret, PLUGIN_LEVEL => $level), $order_by);
+    return self::query(array(PLUGIN_SECRET => $secret, PLUGIN_LEVEL => $level, PLUGIN_HOST => QS_ID), $order_by);
   }
 
   static function query($criterias, $order_by = null) {
