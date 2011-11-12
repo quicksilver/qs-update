@@ -110,9 +110,9 @@ class Plugin {
       return null;
     $plugin_rec = array_shift($recs);
     $versions = array();
-    $plugin = new Plugin($plugin_rec);
+    $plugin = new Plugin($plugin_rec, true);
     foreach ($recs as $rec) {
-      $version = new Plugin($rec);
+      $version = new Plugin($rec, true);
       $version->setLatestVersion($plugin);
       $versions[] = $version;
     }
@@ -131,14 +131,14 @@ class Plugin {
     return $plugin;
   }
 
-  function __construct($dict) {
+  function __construct($dict, $saved = false) {
     if (!@$dict['displayVersion'])
       $dict['displayVersion'] = null;
     $this->dict = $dict;
     $this->latestVersion = $this;
     $this->versions = array();
     $this->versions[$this->version] = $this;
-    $this->dirtyProperties = array_keys($dict);
+    $this->dirtyProperties = $saved ? array() : array_keys($dict);
   }
 
   function __tostring() {
