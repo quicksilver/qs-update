@@ -217,15 +217,29 @@ function mime_type($file) {
   return $type;
 }
 
-function send_file($file, $name = null, $redirect = true) {
-  if ($redirect) {
+function send_file($file, $name = null) {
+  if (strpos($file, "http") === 0) {
+    /* HTTP link, redirect… */
+
     header('Location:' . $file);
     die("You are being redirected...");
   } else {
-    $file = file_root($file);
-    header("Content-Type: " . mime_type($file));
-    echo file_get_contents($file);
+    $file_path = file_root($file) . $file;
+    $type = mime_type($file_path);
+    $size = filesize($file_path);
+
+    debug("sending file \"$file\" ($file_path) with name \"$name\", type: $type,  size: $size");
+    header("Content-Type: " . $type);
+    header("Content-Length: " . $size);
+    if ($name)
+      header("Content-Disposition: attachment; filename=\"" . $name . "\"");
+    $contents = file_get_contents($file_path);
+    if (!$contents)
+      return false;
+    echo $contents;
+    die();
   }
+  return true;
 }
 
 function hexstring_to_int($string) {
