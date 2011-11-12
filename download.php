@@ -3,61 +3,68 @@
  * File that get accessed when QS request an update (either plugin or main application)
  * 
  * When updating the app, we'll recieve :
- *   /download.php?id=com.blacktree.Quicksilver&type=dmg&new=yes (yes, with no version)
+ *   /download.php?id=com.blacktree.Quicksilver&type=dmg&new=yes
  * When updating a plugin, we'll recieve :
  *   /download.php?qsversion=%d&id=%@
  */
 
 include("lib/functions.php");
 
-$type = null; /* either "app", "plugin" or null */
 $id = @$_GET['id'];
-$appType = null;
-$dlType = @$_GET['type'];
-$new = @$_GET['new'];
-$qsversion = @$_GET['qsversion'];
+$version = @$_GET['version'];
+
+/* Provide Quicksilver download if nothing is requested */
+if (!$id)
+  $id = QS_ID;
 
 $plugin = null;
 if ($id == QS_ID) {
-  $type = "app";
-  if (@$_GET['pre'] == "1")
-    $appType = "pre";
-  if (@$_GET['dev'] == "1")
-    $appType = "dev";
-  if ($appType)
-    $id .= ".$appType";
+  /* Reconstruct level */
+  if (@$_GET['dev'])
+    $level = LEVEL_DEV;
+  else if (@$_GET['pre'])
+    $level = LEVEL_PRE;
+  else
+    $level = LEVEL_NORMAL;
 
-  $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id);
+  $criteria[PLUGIN_LEVEL] = $level;
+
+  /* Sniff the requested version */
+  $qsversion = intval(@$_GET['qsversion']);
+  if($qsversion)
+    $criteria[PLUGIN_VERSION] = $qsversion;
+
+  debug("Request for application download \"$id\" with level $level");
+  $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id, $criteria);
+  if (!$plugin)
+    http_error(404, "Application not found");
+
+  /* Start the download ! */
+  if (!$plugin->download())
+    http_error(404, "Update file not found");
+
 } elseif ($id != null) {
-  $type = "plugin";
   $criteria = array();
+  $qsversion = @$_GET['qsversion'];
   $criteria[PLUGIN_HOST] = QS_ID;
   $criteria[PLUGIN_IDENTIFIER] = $id;
+
+  if ($version)
+    $criteria[PLUGIN_VERSION] = intval($version);
 
   if ($qsversion)
     $criteria[PLUGIN_HOST_VERSION] = $qsversion;
 
+  debug("Request for plugin download \"$id\" with criterias " . dump_str($criteria));
   $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id, $criteria);
-}
+  if (!$plugin)
+    http_error(404, "Plugin not found");
 
-if ($type == "app") {
-  switch ($dlType) {
-    case "dmg":
-      /* Build a path to the app dmg */
-      $file = $plugin->plugin_url($dlType);
-      if (!$file)
-        http_error(500, "Non-existent file for plugin \"$id\"");
-      send_file($file);
-    break;
-    default:
-      http_error(500, "Unhandled type \"$dlType\". Use type=dmg");
-    break;
-  }
-} else if ($type == "plugin") {
-  /* Build a path to this plugin dmg */
+  /* Start the download ! */
   if (!$plugin->download())
-    http_error(500, "File not found");
+    http_error(404, "Update file not found");
 } else {
   http_error(400, "Unknown update requested");
 }
+http_error(200, "OK");
 ?>

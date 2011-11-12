@@ -22,6 +22,8 @@ define("LEVEL_DEV",     2);
 
 define("PLUGIN_TABLE", "plugins");
 
+define("GITHUB_BASE_URL", "http://cloud.github.com/downloads/quicksilver/Quicksilver/");
+
 class Plugin {
   static private $plugins = null;
 
@@ -173,6 +175,30 @@ class Plugin {
     return glob_file("../update/files", $file_name, $glob, __FILE__);
   }
 
+  function application_url($ext = "dmg") {
+    $url = null;
+
+    if ($this->level == LEVEL_NORMAL) {
+
+      /* Use github */
+      // Drop the beta symbol so that we can prepend a plain B
+      $version = "B" . str_replace(utf8_decode("ß"), "", $this->displayVersion);
+
+// DO NOT, under *ANY* circumstances, change this. It allows for the faulty ß61 which could not update apps properly
+if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
+	$version = "B62x";
+}
+
+      $dmg_name = "Quicksilver $version.$ext";
+      $url = GITHUB_BASE_URL . $dmg_name;
+    } else {
+      /* Use local copy */
+      $url = $this->plugin_url($ext);
+    }
+    debug("Plugin#application_url: $url");
+    return $url;
+  }
+
   function plist_file($glob = true) {
     return $this->plugin_file("qsinfo", $glob);
   }
@@ -264,14 +290,16 @@ class Plugin {
     $this->dirtyProperties = array();
 
     /* Move our uploaded files to their final location */
-    $plugin_path = $this->plugin_file("qspkg", false);
+    $plugin_path = $this->plugin_file($this->host == null ? "dmg" : "qspkg", false);
     $info_plist_path = $this->plist_file(false);
     $image_path = $this->image_file($image_ext);
+
+    debug("Plugin#create: \"$this\" => moving files: \"$plugin_path\", \"$info_plist_path\", \"$image_path\"");
 
     if (!move_uploaded_file($archive_file, $plugin_path)) {
       error("Can't move \"$archive_file\" to \"$plugin_path\"");
       $this->delete();
-      return false; 
+      return false;
     }
 
     if (!move_uploaded_file($info_file, $info_plist_path)) {
@@ -322,7 +350,7 @@ class Plugin {
     }
 
     /* Delete files */
-    $plugin_path = $this->plugin_file("qspkg", false);
+    $plugin_path = $this->plugin_file($this->host == null ? "dmg" : "qspkg", false);
     $info_plist_path = $this->plugin_file("qsinfo", false);
     $image_path = $this->image_file(false);
 
@@ -340,7 +368,12 @@ class Plugin {
 
   function download() {
     debug("Plugin#download: \"$this\"");
-    $file = $this->plugin_url();
+    $file = null;
+    if ($this->host == null) {
+      $file = $this->application_url("dmg");
+    } else {
+      $file = $this->plugin_url("qspkg", false);
+    }
     if (!$file) {
       error("Plugin archive for \"$this\" not found");
       return false;
@@ -354,7 +387,11 @@ class Plugin {
       return false;
     }
 
-    send_file($file);
+    if (!send_file($file, $this->displayName() . "." . ($this->host == null ? "dmg" : "qspkg"))) {
+      error("Failed sending file \"$file\"");
+      return false;
+    }
+    return true;
   }
 }
 
