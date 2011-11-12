@@ -193,9 +193,26 @@ function glob_file($dir, $glob, $call_glob = true, $__file__ = null) {
 }
 
 function mime_type($file) {
-  $finfo = finfo_open();
-  $type = finfo_file($finfo, $file, FILEINFO_MIME);
-  finfo_close($finfo);
+  $type = "application/octet-stream";
+  if (function_exists('finfo_open')) {
+    $finfo = finfo_open();
+    $type = finfo_file($finfo, $file, FILEINFO_MIME);
+    finfo_close($finfo);
+  } else {
+    $last_dot = strrpos($file, ".");
+    if ($last_dot) {
+      $ext = substr($file, $last_dot, count($file) - $last_dot);
+      switch ($ext) {
+        case "dmg":
+          $type = "application/x-apple-diskimage";
+        break;
+
+        case "qspkg":
+          $type = "application/x-cpio";
+        break;
+      }
+    }
+  }
   return $type;
 }
 
