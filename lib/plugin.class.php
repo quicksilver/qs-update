@@ -284,6 +284,7 @@ if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
     $values = implode(", ", $values);
 
     $sql = "INSERT INTO " . PLUGIN_TABLE . " ($keys) VALUES ($values);";
+    debug("Plugin#create: Inserting plugin: $sql");
     if (!query_db($sql)) {
       error("Failed executing SQL: \"$sql\"");
       return false;
@@ -320,12 +321,13 @@ if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
 
   function save() {
     if (count($this->dirtyProperties)) {
-      debug("Plugin#save: \"$this\"");
       $props = array();
       foreach ($this->dirtyProperties as $key) {
-        $props[] = "$prop = " . quote_db($this->$key);
+        $props[] = $key . " = " . quote_db($this->$key);
       }
-      $props[] = "modDate = NOW()";
+      /* Only bump modDate if it isn't already specified */
+      if (!in_array("modDate", $this->dirtyProperties))
+        $props[] = "modDate = NOW()";
       $props = implode(", ", $props);
 
       $id = quote_db($this->identifier);
@@ -335,10 +337,13 @@ if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
         error("Failed executing SQL: \"$sql\"");
         return false;
       }
-      
+
+      /* Reset dirty properties for the next set of changes */
       $this->dirtyProperties = array();
       return true;
     }
+    /* Nothing to save */
+    return true;
   }
 
   function delete() {
@@ -375,6 +380,7 @@ if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
     } else {
       $file = $this->plugin_url("qspkg", false);
     }
+
     if (!$file) {
       error("Plugin archive for \"$this\" not found");
       return false;
