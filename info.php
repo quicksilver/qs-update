@@ -35,7 +35,7 @@ if (!$asOfDate)
   $shouldSendFullIndex = true;
 
 /* Convert the hexString back in an integer */
-$version = hexstring_to_int($version);
+//$version = hexstring_to_int($version);
 
 $sids = @$_GET['sids'];
 if ($sids) {
