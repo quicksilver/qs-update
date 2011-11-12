@@ -372,6 +372,10 @@ if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
     return true;
   }
 
+  function displayName() {
+    return $this->name . " " . ($this->displayVersion ? "{$this->displayVersion}" : "(v$this->version)");
+  }
+
   function download() {
     debug("Plugin#download: \"$this\"");
     $file = null;
