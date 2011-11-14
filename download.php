@@ -12,6 +12,7 @@ include("lib/functions.php");
 
 $id = @$_GET['id'];
 $version = @$_GET['version'];
+$qsversion = @$_GET['qsversion'];
 
 /* Provide Quicksilver download if nothing is requested */
 if (!$id)
@@ -30,7 +31,7 @@ if ($id == QS_ID) {
   $criteria[PLUGIN_LEVEL] = $level;
 
   /* Sniff the requested version */
-  $qsversion = intval(@$_GET['qsversion']);
+  $qsversion = intval($qsversion);
   if($qsversion)
     $criteria[PLUGIN_VERSION] = $qsversion;
 
@@ -45,7 +46,6 @@ if ($id == QS_ID) {
 
 } elseif ($id != null) {
   $criteria = array();
-  $qsversion = @$_GET['qsversion'];
   $criteria[PLUGIN_HOST] = QS_ID;
   $criteria[PLUGIN_IDENTIFIER] = $id;
 
