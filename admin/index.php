@@ -31,7 +31,7 @@ $plugins = array_merge($plugins, $secrets);
     <th>Version</th>
     <th>Level</th>
     <th>Downloads</th>
-    <th>Actions</th>
+    <th colspan="2">Actions</th>
   </tr>
   <?php
   foreach ($app->versions as $version) {
@@ -40,6 +40,7 @@ $plugins = array_merge($plugins, $secrets);
       <td><?= $version->level ?></td>
       <td><?= $version->downloads ?></td>
       <td><a href="update.php?id=<?= $version->identifier ?>&amp;version=<?= $version->version ?>">Edit</a></td>
+      <td><a href="delete.php?id=<?= $version->identifier ?>&amp;version=<?= $version->version ?>">Delete</a></td>
     </tr><?php
   }
   ?>
@@ -53,7 +54,7 @@ $plugins = array_merge($plugins, $secrets);
     <th>Name</th>
     <th>Version</th>
     <th>Downloads</th>
-    <th>Actions</th>
+    <th colspan="2">Actions</th>
   </tr>
   <?php
   foreach ($plugins as $plugin) {
@@ -62,6 +63,7 @@ $plugins = array_merge($plugins, $secrets);
       <td><?= $plugin->displayVersion() ?></td>
       <td><?= $plugin->downloads ?></td>
       <td><a href="update.php?id=<?= $plugin->identifier ?>&amp;version=<?= $plugin->version ?>">Edit</a></td>
+      <td><a href="delete.php?id=<?= $plugin->identifier ?>&amp;version=<?= $plugin->version ?>">Delete</a></td>
     </tr><?php
   }
   ?>
