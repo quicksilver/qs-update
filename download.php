@@ -26,6 +26,12 @@ if ($id == QS_ID) {
     error("Unknown download type requested: \"$type\"" . dump_str($_SERVER)); /* That's just to be sure... */
   }
 
+  /* DO NOT, under *ANY* circumstances, change the following.
+   * It allows for the faulty ß61/ß62 which could not update apps properly */
+  if(strstr($_SERVER['HTTP_USER_AGENT'], "3900") || strstr($_SERVER['HTTP_USER_AGENT'], "3901")) {
+    die();
+  }
+
   /* Reconstruct level */
   if (@$_GET['dev'])
     $level = LEVEL_DEV;
