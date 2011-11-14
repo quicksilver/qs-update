@@ -20,6 +20,12 @@ if (!$id)
 
 $plugin = null;
 if ($id == QS_ID) {
+  /* Application update */
+  $type = @$_GET['type']; // Unused
+  if ($type != "" && $type != "dmg") {
+    error("Unknown download type requested: \"$type\"" . dump_str($_SERVER)); /* That's just to be sure... */
+  }
+
   /* Reconstruct level */
   if (@$_GET['dev'])
     $level = LEVEL_DEV;
