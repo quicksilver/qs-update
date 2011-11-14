@@ -28,6 +28,8 @@ switch ($type) {
     $level = LEVEL_NORMAL;
   break;
 }
+
+debug("Checking type \"$type\" => \"$level\", current \"$current\"");
 $criterias = array(PLUGIN_LEVEL => $level);
 
 $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id, $criterias);
