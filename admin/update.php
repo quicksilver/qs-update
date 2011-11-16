@@ -85,6 +85,7 @@ if ($plugin) {
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   <title>Editing <?= $plugin->name ?></title>
+  <link href="site.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
   <h1>Editing <?= $plugin->name ?></h1>

@@ -158,6 +158,7 @@ if (@$_POST['submit'] == "New") {
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Add plugin</title>
+    <link href="site.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <form name="plugin_add" method="post" enctype="multipart/form-data">

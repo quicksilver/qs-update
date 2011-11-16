@@ -15,14 +15,13 @@ $plugins = array_merge($plugins, $secrets);
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   <title>Update administration page</title>
+  <link href="site.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<h1 style="text-decoration:underline">Update administration page</h1>
-
+<h1>Update administration page</h1>
 <p><a href="add.php"><strong>Add update/new plugin</strong></a></p>
-<div style="width:400px;border-top:1px solid #666;margin:20px 0 10px 0;">
-
-<h2 style="text-decoration:underline">Application Updates</h2>
+<hr />
+<h2>Application Updates</h2>
 
 <p><?= count($app->versions) ?> updates</p>
 
@@ -45,8 +44,8 @@ $plugins = array_merge($plugins, $secrets);
   }
   ?>
 </table>
-<div style="width:400px;border-top:1px solid #666;margin:20px 0 10px 0;">
-  <h2 style="text-decoration:underline">Plugins</h2>
+<hr />
+<h2>Plugins</h2>
 <p><?= count($plugins) ?> plugins</p>
 
 <table>
