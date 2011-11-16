@@ -157,6 +157,25 @@ function detect_osx_version() {
   return $os_version;
 }
 
+/** This function compares two version strings formatted like this "1.0.0".
+ * Returns 1 if $version1 is 'better' than $version2.
+ */
+function compare_versions($version1, $version2) {
+  list($major1, $minor1, $bugfix1) = explode(".", $version1);
+  list($major2, $minor2, $bugfix2) = explode(".", $version2);
+
+  if ($major1 != $major2)
+    return ($major1 > $major2 ? 1 : -1);
+
+  if ($minor1 != $minor2)
+    return ($minor1 > $minor2 ? 1 : -1);
+
+  if ($bugfix1 != $bugfix2)
+    return ($bugfix1 > $bugfix2 ? 1 : -1);
+
+  return 0;
+}
+
 /** This function returns true if we're on localhost, false otherwise */
 function is_localhost() {
   return $_SERVER['HTTP_HOST'] == "localhost"
