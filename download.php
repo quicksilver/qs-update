@@ -49,8 +49,10 @@ if ($id == QS_ID) {
 
   debug("Request for application download \"$id\" with level $level");
   $plugin = Plugin::get(PLUGIN_IDENTIFIER, $id, $criteria);
-  if (!$plugin)
+  if (!$plugin) {
+    error("Failed to get application for level: \"$level\", version: \"$qsversion\", criterias: \"" . dump_str($criteria) . "\"");
     http_error(404, "Application not found");
+  }
 
   /* Start the download ! */
   if (!$plugin->download())
