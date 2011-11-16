@@ -186,11 +186,6 @@ class Plugin {
       // Drop the beta symbol so that we can prepend a plain B
       $version = "B" . str_replace(utf8_decode("ß"), "", $this->displayVersion);
 
-// DO NOT, under *ANY* circumstances, change this. It allows for the faulty ß61 which could not update apps properly
-if(strstr($_SERVER['HTTP_USER_AGENT'],"3900")) {
-	$version = "B62x";
-}
-
       $dmg_name = "Quicksilver $version.$ext";
       $url = GITHUB_BASE_URL . $dmg_name;
     } else {
