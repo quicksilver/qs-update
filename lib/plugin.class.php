@@ -169,12 +169,13 @@ class Plugin {
   function image_file($ext = "*") {
     $file_name = $this->file_name($ext, false);
     /* Images *must be* alone in their directory because of the default $ext pattern */
-    return glob_file("files/images/", $file_name, $ext == "*", __FILE__);
+    $image_file = glob_file("../files/images/", $file_name, $ext == "*", __FILE__);
+    return $image_file;
   }
 
   function plugin_file($ext = "qspkg", $glob = true) {
     $file_name = $this->file_name($ext, true);
-    return glob_file('files/', $file_name, $glob, __FILE__);
+    return glob_file('../files/', $file_name, $glob, __FILE__);
   }
 
   function application_url($ext = "dmg") {
