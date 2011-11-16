@@ -42,12 +42,9 @@ if ($sids) {
   $sids = explode(",", $sids);
 }
 
-$os_version = null;
-if (preg_match_all("/.*OSX\/(\d{1,})\.(\d{1,})\.(\d{1,}).*/", $_SERVER['HTTP_USER_AGENT'], $version_parts)) {
-  $os_version = $version_parts[1][0] . "." . $version_parts[2][0] . "." . $version_parts[3][0];
-  //debug("OS X Version: " . $os_version);
-  /* TODO: Use this */
-}
+$os_version = @$_GET['osVersion'] ? $_GET['osVersion'] : null;
+if (!$os_version)
+  $os_version = detect_osx_version();
 
 debug(__FILE__ . ": query: " . $_SERVER['QUERY_STRING']);
 debug(__FILE__ . ": asOfDate: $asOfDate, version: $version, updated: " . ($updated ? "yes" : "no") . ", full index: " . ($shouldSendFullIndex ? "yes" : "no") . ", sids: " . dump_str($sids));
@@ -58,6 +55,9 @@ $criteria[PLUGIN_HOST] = QS_ID;
 
 if ($version)
   $criteria[PLUGIN_HOST_VERSION] = $version;
+
+if ($os_version)
+  $criteria[PLUGIN_SYSTEM_VERSION] = $os_version;
 
 if ($asOfDate) /* Provide a full list after an update */
   $criteria[PLUGIN_MOD_DATE] = $asOfDate;

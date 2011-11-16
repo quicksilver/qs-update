@@ -132,6 +132,31 @@ function dump($obj) {
 
 /** Utilities */
 
+/** This function tries to detect the user's OS X version
+ */
+function detect_osx_version() {
+  $os_version = null;
+  if (preg_match_all("/.*OSX\/(\d{1,})\.(\d{1,})\.(\d{1,}).*/", $_SERVER['HTTP_USER_AGENT'], $version_parts)) {
+    /* Quicksiver */
+    $os_version = intval($version_parts[1][0]) . "." . intval($version_parts[2][0]) . "." . intval($version_parts[3][0]);
+  } else if (preg_match_all("/.*\(Macintosh; (.*) Mac OS X (\d{1,})([_\.](\d{1,})([_\.](\d{1,}))?)?.*\).*/", $_SERVER['HTTP_USER_AGENT'], $version_parts)) {
+    /* Chrome, Safari: (Macintosh; Intel Mac OS X X_Y_Z)
+     * Firefox: (Macintosh; Intel Mac OS X X.Y; rv:2.0)
+     */
+    /* WARNING: Firefox *lies* by never telling the bugfix version (or is it the rv thing ?) */
+
+    /* $1: is Intel/PowerPC, $2 is major version, $3 is rest without major, $4 is minor, $5 is rest without major.minor, $6 is bugfix */
+    $arch = $version_parts[1][0];
+    $major = $version_parts[2][0];
+    $minor = $version_parts[4][0];
+    $bugfix = $version_parts[6][0];
+    $os_version = intval($major) . "." . intval($minor) . "." . intval($bugfix);
+  } else {
+    error("Failed to detect OS X version in \"" . $_SERVER['HTTP_USER_AGENT'] . "\"");
+  }
+  return $os_version;
+}
+
 /** This function returns true if we're on localhost, false otherwise */
 function is_localhost() {
   return $_SERVER['HTTP_HOST'] == "localhost"
