@@ -15,6 +15,7 @@ define("PLUGIN_HOST_VERSION",     "hostVersion");
 define("PLUGIN_SYSTEM_VERSION",   "systemVersion");
 define("PLUGIN_MOD_DATE",         "modDate");
 define("PLUGIN_DOWNLOAD_COUNT",   "downloads");
+define("PLUGIN_SECRET_IDS",       "secretIDs");
 
 define("LEVEL_NORMAL",  0);
 define("LEVEL_PRE",     1);
@@ -37,13 +38,25 @@ class Plugin {
   private $dirtyProperties = null;
 
   private static function parseCriterias($criterias) {
+    /* Default to hiding secret plugins
+     * Also causes the case below to be executed (for secret ids) */
+    if (!@$criterias[PLUGIN_SECRET])
+      $criterias[PLUGIN_SECRET] = false;
+
     $where = array();
     foreach ($criterias as $criteria => $value) {
       switch ($criteria) {
         case PLUGIN_SECRET:
-          if ($value)
-            $where[$criteria] = "secret = 1";
+          $secret_strings = array();
+          /* Handle that here because it gets ORed with secret */
+          if ($criterias[PLUGIN_SECRET_IDS]) {
+            foreach ($criterias[PLUGIN_SECRET_IDS] as $secret_id) {
+              $secret_strings[] = sprintf("identifier = \"%s\"", $secret_id);
+            }
+          }
+          $where[$criteria] = "(secret = " . ($value ? "1" : "0") . (count($secret_strings) != 0 ? " OR " . implode(" OR ", $secret_strings) : "") . ")";
           break;
+        case PLUGIN_SECRET_IDS; /* Handled above */ break;
         case PLUGIN_LEVEL:
           $where[$criteria] = "level <= $value";
           break;

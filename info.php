@@ -62,7 +62,8 @@ if ($os_version)
 if ($asOfDate) /* Provide a full list after an update */
   $criteria[PLUGIN_MOD_DATE] = $asOfDate;
 
-/* FIXME: sids */
+if ($sids)
+  $criteria[PLUGIN_SECRET_IDS] = $sids;
 
 /* TODO: Send plugins categories along with the list ? */
 
