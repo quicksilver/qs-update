@@ -43,7 +43,7 @@ if ($id == QS_ID) {
   $criteria[PLUGIN_LEVEL] = $level;
 
   /* Sniff the requested version */
-  $qsversion = intval($qsversion);
+  $qsversion = $qsversion ? intval($qsversion) : null;
   if($qsversion)
     $criteria[PLUGIN_VERSION] = $qsversion;
 
