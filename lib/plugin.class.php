@@ -170,6 +170,8 @@ class Plugin {
     $file_name = $this->file_name($ext, false);
     /* Images *must be* alone in their directory because of the default $ext pattern */
     $image_file = glob_file("../files/images/", $file_name, $ext == "*", __FILE__);
+    if (!$image_file)
+      $image_file = glob_file("../files/images/", "default.png", false, __FILE__);
     return $image_file;
   }
 
