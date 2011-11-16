@@ -111,5 +111,7 @@ $guessedStructure = $td->toCFType( $structure );
 $plist = new CFPropertyList();
 $plist->add( $guessedStructure );
 
+header("Content-Type: application/xml");
+
 echo $plist->toXML(true);
 ?>
