@@ -82,6 +82,8 @@ define("LGLVL_WARN", E_USER_WARNING);
 define("LGLVL_ERROR", E_USER_ERROR);
 
 $current_level = LGLVL_WARN;
+if (is_localhost())
+  $current_level = LGLVL_DEBUG;
 
 function log_level() {
   global $current_level;
@@ -101,6 +103,10 @@ function qslog($level, $str) {
 
 function debug($str) {
   qslog(LGLVL_DEBUG, $str);
+}
+
+function warn($str) {
+  qslog(LGLVL_WARN, $str);
 }
 
 function error($str) {
@@ -125,6 +131,13 @@ function dump($obj) {
 }
 
 /** Utilities */
+
+/** This function returns true if we're on localhost, false otherwise */
+function is_localhost() {
+  return $_SERVER['HTTP_HOST'] == "localhost"
+    || $_SERVER['REMOTE_ADDR'] == "::1"
+    || $_SERVER['REMOTE_ADDR'] == "127.0.0.1";
+}
 
 /** This function does its best to provide the correct URLs relative
  * to the HTTP server's DocRoot. This allow a transparent use when
