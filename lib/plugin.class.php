@@ -23,6 +23,7 @@ define("LEVEL_DEV",     2);
 define("PLUGIN_TABLE", "plugins");
 
 define("GITHUB_BASE_URL", "http://cloud.github.com/downloads/quicksilver/Quicksilver/");
+define("SYSTEM_DOWNLOAD_URL", "http://qs0.qsapp.com/plugins/download.php");
 
 class Plugin {
   static private $plugins = null;
@@ -196,6 +197,13 @@ class Plugin {
       $url = $this->plugin_url($ext);
     }
     debug("Plugin#application_url: $url");
+    return $url;
+  }
+
+  function download_url() {
+    $url = (is_localhost() ? web_root("../download.php", __FILE__) : SYSTEM_DOWNLOAD_URL);
+
+    $url .= "?id=" . $this->identifier . "&version=" . $this->version;
     return $url;
   }
 
