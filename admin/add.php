@@ -161,24 +161,27 @@ if (@$_POST['submit'] == "New") {
     <link href="site.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <form name="plugin_add" method="post" enctype="multipart/form-data">
-      <label for="plugin_archive_file">Plugin ditto archive :</label>
-      <input id="plugin_archive_file" name="plugin_archive_file" type="file"/><br />
-      <label for="info_plist_file">Plugin Info.plist :</label>
-      <input id="info_plist_file" name="info_plist_file" type="file"/><br />
-      <label for="image_file">Plugin Icon :</label>
-      <input id="image_file" name="image_file" type="file"/><br />
+    <div id="page">
+      <h1>New plugin/application update</h1>
+      <form name="plugin_add" method="post" enctype="multipart/form-data">
+        <label for="plugin_archive_file">Plugin ditto archive :</label>
+        <input id="plugin_archive_file" name="plugin_archive_file" type="file"/><br />
+        <label for="info_plist_file">Plugin Info.plist :</label>
+        <input id="info_plist_file" name="info_plist_file" type="file"/><br />
+        <label for="image_file">Plugin Icon :</label>
+        <input id="image_file" name="image_file" type="file"/><br />
 
-      <input id="is_app" name="is_app" type="checkbox"/><label for="is_app"> Application update</label><br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="app_level">Update level :</label>
-      <input type="radio" id="app_level_nor" name="app_level" value="0"><label for="app_level_nor"> Normal</label>&nbsp;&nbsp;
-      <input type="radio" id="app_level_pre" name="app_level" value="1"><label for="app_level_pre"> Pre-release</label>&nbsp;&nbsp;
-      <input type="radio" id="app_level_dev" name="app_level" value="2"><label for="app_level_dev"> Developer</label>
-      </br >
+        <input id="is_app" name="is_app" type="checkbox"/><label for="is_app"> Application update</label><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="app_level">Update level :</label>
+        <input type="radio" id="app_level_nor" name="app_level" value="0"><label for="app_level_nor" class="no_strong"> Normal</label>&nbsp;&nbsp;
+        <input type="radio" id="app_level_pre" name="app_level" value="1"><label for="app_level_pre" class="no_strong"> Pre-release</label>&nbsp;&nbsp;
+        <input type="radio" id="app_level_dev" name="app_level" value="2"><label for="app_level_dev" class="no_strong"> Developer</label>
+        </br >
 
-      <label for="date">Update date (leave empty to use archive modification time)</label>
-      <input id="mod_date" name="mod_date" type="datetime" size="32"/><br />
-      <input type="submit" name="submit" value="New" />
-    </form>
+        <label for="date">Update date :</label><input id="mod_date" name="mod_date" type="datetime" size="32" title="Leave empty to default to archive modification date"/><br />
+        <input class="right" type="submit" name="submit" value="New" />
+      </form>
+      <a href="index.php">Return to Updates index page</a>
+    </div>
   </body>
 </html>

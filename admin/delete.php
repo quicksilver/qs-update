@@ -45,8 +45,10 @@ if ($plugin) {
   <link href="site.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-  <h1>Deleting <?= $plugin->name ?></h1>
-  <?php puts($error); ?>
-  <a href="index.php">Return to updates</a>
+  <div id="page">
+    <h1>Deleting <?= $plugin->name ?></h1>
+    <?php puts($error); ?>
+    <a href="index.php">Return to updates</a>
+  </div>
 </body>
 </html>
