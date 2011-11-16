@@ -91,8 +91,9 @@ foreach ($query as $plugin) {
     try {
       $info_struct = new CFPropertyList($info_plist);
     }
-    catch (DOMException $e) {
-      http_error(500, "Failed reading plist for \"$plugin\"");
+    catch (Exception $e) {
+      error("Failed reading plist for \"$plugin\": Exception $e");
+      continue;
     }
 
     $info_dict = $info_struct->getValue(true);
