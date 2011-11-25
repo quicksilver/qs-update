@@ -15,7 +15,8 @@ if (@$_POST['submit'] == "New") {
   $info_file = @$_FILES["info_plist_file"];
   $image_file = @$_FILES["image_file"];
   $image_ext = @$_POST['image_ext'];
-  $level = @$_POST['app_level'] ? $_POST['app_level'] : 0; /* Plugins get level from plist */
+  $level = @$_POST['level'] ? $_POST['level'] : nil; /* Plugins will use level from plist if absent */
+  $secret = @$_POST['secret'] ? true : false;
 
   if ($archive_file["error"] !== 0)
     http_error(500, "Missing plugin_archive_file");
@@ -70,8 +71,7 @@ if (@$_POST['submit'] == "New") {
     if ($dict->get('CFBundleShortVersionString'))
       $record[PLUGIN_DISPLAY_VERSION] = utf8_decode($dict->get('CFBundleShortVersionString')->getValue());
 
-    $record[PLUGIN_LEVEL] = LEVEL_NORMAL;
-    $record[PLUGIN_SECRET] = 0;
+    $record[PLUGIN_SECRET] = $secret;
     $requirements = $dict->get('QSRequirements');
     if ($requirements) {
       $feature_level = $requirements->get('feature');
@@ -110,6 +110,11 @@ if (@$_POST['submit'] == "New") {
         $record[PLUGIN_DESCRIPTION] = $desc->getValue();
     }
 
+    if ($level)
+      $record[PLUGIN_LEVEL] = $level;
+    if ($secret)
+      $record[PLUGIN_SECRET] = $secret;
+
     debug("Plugin record generated: " . dump_str($record));
 
     /* Create the plugin */
@@ -134,6 +139,7 @@ if (@$_POST['submit'] == "New") {
     $record[PLUGIN_NAME] = $dict->get('CFBundleName')->getValue();
     $record[PLUGIN_VERSION] = hexstring_to_int($dict->get('CFBundleVersion')->getValue());
     $record[PLUGIN_LEVEL] = $level;
+    $record[PLUGIN_SECRET] = $secret;
     if ($mod_date)
       $record[PLUGIN_MOD_DATE] = $mod_date;
     if ($dict->get('CFBundleShortVersionString'))
@@ -172,10 +178,12 @@ if (@$_POST['submit'] == "New") {
         <input id="image_file" name="image_file" type="file"/><br />
 
         <input id="is_app" name="is_app" type="checkbox"/><label for="is_app"> Application update</label><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="app_level">Update level :</label>
-        <input type="radio" id="app_level_nor" name="app_level" value="0"><label for="app_level_nor" class="no_strong"> Normal</label>&nbsp;&nbsp;
-        <input type="radio" id="app_level_pre" name="app_level" value="1"><label for="app_level_pre" class="no_strong"> Pre-release</label>&nbsp;&nbsp;
-        <input type="radio" id="app_level_dev" name="app_level" value="2"><label for="app_level_dev" class="no_strong"> Developer</label>
+        
+        <label for="level">Update level :</label>
+        <input type="radio" id="level_nor" name="level" value="0"><label for="level_nor" class="no_strong"> Normal</label>&nbsp;&nbsp;
+        <input type="radio" id="level_pre" name="level" value="1"><label for="level_pre" class="no_strong"> Pre-release</label>&nbsp;&nbsp;
+        <input type="radio" id="level_dev" name="level" value="2"><label for="level_dev" class="no_strong"> Developer</label>
+        <input id="secret" name="secret" type="checkbox"><label for="secret">Secret</label>
         </br >
 
         <label for="date">Update date :</label><input id="mod_date" name="mod_date" type="datetime" size="32" title="Leave empty to default to archive modification date"/><br />
