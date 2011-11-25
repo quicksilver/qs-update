@@ -148,6 +148,8 @@ class Plugin {
   function __construct($dict, $saved = false) {
     if (!@$dict['displayVersion'])
       $dict['displayVersion'] = null;
+    elseif ($saved)
+      $dict['displayVersion'] = utf8_encode($dict['displayVersion']);
     $this->dict = $dict;
     $this->latestVersion = $this;
     $this->versions = array();
