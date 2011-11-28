@@ -395,7 +395,7 @@ class Plugin {
   }
 
   function displayName() {
-    return $this->name . " " . ($this->displayVersion ? "{$this->displayVersion}" : "(v$this->version)");
+    return $this->name . " " . ($this->displayVersion ? "{$this->displayVersion}" : "($this->version)");
   }
 
   function download() {
