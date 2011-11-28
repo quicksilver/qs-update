@@ -36,7 +36,7 @@ $plugins = array_merge($plugins, $secrets);
           $url = "update.php?id=" . $version->identifier . "&amp;version=" . $version->version;
           $odd = ($i % 2 == 1);
           ?><tr<?= $odd ? ' class="odd"' : "" ?> onclick="javascript:document.location = '<?= $url ?>';">
-          <td><a href="<?= $url ?>">v<?= substr($version->displayVersion(),2) ?></a></td>
+          <td><a href="<?= $url ?>"><?= $version->displayVersion() ?></a></td>
           <td><a href="<?= $url ?>"><?= $version->level ?></a></td>
           <td><a href="<?= $url ?>"><?= $version->downloads ?></a></td>
         </tr><?php

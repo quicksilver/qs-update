@@ -266,10 +266,23 @@ class Plugin {
     $this->latestVersion = $latest;
   }
 
+  /** This function returns the plugin version for display purposes
+   * 
+   * no displayVersion set => "$bundle_version"
+   * displayVersion set, matches /$major.$minor(.$bugfix)/ => "v$major.$minor(.$bugfix) ($bundle_version)"
+   * displayVersion set, doesn't match => "$displayVersion ($bundle_version)"
+   */
   function displayVersion() {
-    return ($this->displayVersion ? "v$this->displayVersion ($this->version)" : "$this->version");
+    if ($this->displayVersion) {
+      $prefix = preg_match("/\d\.\d(\.\d)?/", $this->displayVersion) ? "v" : "";
+      return sprintf("%s%s (%s)", $prefix, $this->displayVersion, $this->version);
+    }
+    return "$this->version";
   }
 
+  /* Serialize the plugin to a PHP array
+   * This is useful to transform the plugin data into some other format.
+   */
   function to_array() {
     $array = array(
       PLUGIN_IDENTIFIER => $this->identifier,
