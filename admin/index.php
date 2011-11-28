@@ -33,7 +33,7 @@ $plugins = array_merge($plugins, $secrets);
         <?php
         $i = 0;
         foreach ($app->versions as $version) {
-          $url = "update.php?id=" . $plugin->identifier . "&amp;version=" . $plugin->version;
+          $url = "update.php?id=" . $version->identifier . "&amp;version=" . $version->version;
           $odd = ($i % 2 == 1);
           ?><tr<?= $odd ? ' class="odd"' : "" ?> onclick="javascript:document.location = '<?= $url ?>';">
           <td><a href="<?= $url ?>">v<?= substr($version->displayVersion(),2) ?></a></td>
